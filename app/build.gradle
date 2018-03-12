@@ -1,0 +1,55 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "cn.thens.arcfacedemo"
+        minSdkVersion 16
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        def buildConfigString = { name, value -> buildConfigField 'String', name, "\"$value\"" }
+        Properties props = new Properties()
+        props.load(new FileInputStream(file("local.properties")))
+        buildConfigString 'AF_APP_ID', props['af_app_id']
+        buildConfigString 'AF_KEY_FT', props['af_key_ft']
+        buildConfigString 'AF_KEY_FD', props['af_key_fd']
+        buildConfigString 'AF_KEY_FR', props['af_key_fr']
+        buildConfigString 'AF_KEY_AGE', props['af_key_age']
+        buildConfigString 'AF_KEY_GENDER', props['af_key_gender']
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets.main {
+        jniLibs.srcDirs = ['libs']
+    }
+    lintOptions {
+        disable "ResourceType", 'MissingTranslation', 'NewApi', 'RtlHardcoded', 'HardcodedText', 'SetTextI18n', 'ClickableViewAccessibility', 'WeakerAccess'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    //rxjava
+    implementation "io.reactivex.rxjava2:rxjava:2.1.6"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle:2.2.0'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle-android:2.2.0'
+    implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
+    implementation 'com.github.VictorAlbertos:RxActivityResult:0.4.5-2.x'
+}

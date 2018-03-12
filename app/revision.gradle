@@ -1,0 +1,27 @@
+def getSvnRevision = {
+    return new ByteArrayOutputStream().withStream { os ->
+        exec {
+            executable = 'svn'
+            args = ['info']
+            standardOutput = os
+        }
+        def lastChangedRevMatcher = os.toString() =~ /(最后修改的版本:|Last Changed Rev:) (\d+)/
+        lastChangedRevMatcher[0][2].toInteger()
+    }
+}
+
+def getGitRevision = {
+    def gitRevisionCommand = 'git rev-list HEAD --count'
+    return gitRevisionCommand.execute().text.trim().toInteger()
+}
+
+def getVcsRevision = {
+    if (new File(".svn").exists()) return getSvnRevision()
+    if (new File(".git").exists()) return getGitRevision()
+    return 1
+}
+
+ext {
+    revision = getVcsRevision()
+    println("revision: $revision")
+}
